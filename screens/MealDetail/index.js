@@ -1,15 +1,30 @@
-import {useRoute} from '@react-navigation/native';
-import React from 'react';
+import {useNavigation, useRoute} from '@react-navigation/native';
+import React, {useLayoutEffect} from 'react';
 import {Image, StyleSheet, Text, View} from 'react-native';
 import {MEALS} from '../../data/dummy-data';
 import MealDetailInfo from '../../components/MealDetailInfo';
 import {ScrollView} from 'react-native-gesture-handler';
+import IconButton from '../../components/IconButton';
+
+const FavoriteButton = () => {
+  const onPress = () => {
+    console.log('pressed');
+  };
+  return <IconButton iconName="star" onPress={onPress} />;
+};
 
 const MealDetail = () => {
   const route = useRoute();
+  const navigation = useNavigation();
   const {mealId} = route.params;
 
   const selectedMeal = MEALS.find(meal => meal.id === mealId);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: FavoriteButton,
+    });
+  }, [navigation]);
 
   return (
     <ScrollView style={styles.root}>
