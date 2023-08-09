@@ -19,6 +19,8 @@ const DrawerNavigator = () => {
         headerStyle: {backgroundColor: '#351401'},
         headerTintColor: 'white',
         sceneContainerStyle: {backgroundColor: '#3f2f25'},
+        drawerActiveTintColor: '#e9a134',
+        drawerContentStyle: {backgroundColor: '#faeeda'},
       }}>
       <Drawer.Screen
         name="MealCategories"
