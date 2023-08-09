@@ -1,30 +1,41 @@
 import {useNavigation, useRoute} from '@react-navigation/native';
-import React, {useLayoutEffect} from 'react';
+import React, {useContext, useLayoutEffect} from 'react';
 import {Image, StyleSheet, Text, View} from 'react-native';
 import {MEALS} from '../../data/dummy-data';
 import MealDetailInfo from '../../components/MealDetailInfo';
 import {ScrollView} from 'react-native-gesture-handler';
 import IconButton from '../../components/IconButton';
-
-const FavoriteButton = () => {
-  const onPress = () => {
-    console.log('pressed');
-  };
-  return <IconButton iconName="star" onPress={onPress} />;
-};
+import {FavoritesContext} from '../../store/context/favorite-context';
 
 const MealDetail = () => {
   const route = useRoute();
   const navigation = useNavigation();
+  const {addFavorite, removeFavorite, ids} = useContext(FavoritesContext);
   const {mealId} = route.params;
 
   const selectedMeal = MEALS.find(meal => meal.id === mealId);
+  const mealsFavorite = ids.includes(mealId);
+
+  const onPressFavorite = () => {
+    if (mealsFavorite) {
+      removeFavorite(mealId);
+      return;
+    }
+    addFavorite(mealId);
+  };
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerRight: FavoriteButton,
+      // eslint-disable-next-line react/no-unstable-nested-components
+      headerRight: () => (
+        <IconButton
+          iconName={mealsFavorite ? 'star' : 'star-outline'}
+          onPress={onPressFavorite}
+        />
+      ),
     });
-  }, [navigation]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [navigation, mealsFavorite]);
 
   return (
     <ScrollView style={styles.root}>
@@ -43,7 +54,7 @@ const MealDetail = () => {
             <Text style={styles.subtitle}>Ingridients</Text>
           </View>
           {selectedMeal.ingredients.map(item => (
-            <View style={styles.listItem}>
+            <View key={item} style={styles.listItem}>
               <Text key={item} style={styles.listItemText}>
                 {item}
               </Text>
@@ -53,7 +64,7 @@ const MealDetail = () => {
             <Text style={styles.subtitle}>Steps</Text>
           </View>
           {selectedMeal.steps.map(item => (
-            <View style={styles.listItem}>
+            <View key={item} style={styles.listItem}>
               <Text key={item} style={styles.listItemText}>
                 {item}
               </Text>
